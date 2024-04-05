@@ -3,4 +3,19 @@
   margin-left: auto;
   margin-right: auto;
   max-width: 50%;
+  font-size: 1.8 rem;
+  font-weight: bold;
+  span {
+    color: red;
+  }
+}
+.correct {
+  color: rgb(56, 130, 105) !important;
+}
+.ivalid {
+  color: rgb(183, 67, 67) !important;
+}
+
+span {
+  color: orangered;
 }
