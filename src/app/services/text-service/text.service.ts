@@ -18,7 +18,7 @@ export class TextService {
       .get(path, { responseType: 'text' })
       .pipe(map((text: string) => this.extractParagraph(text, wordCount)))
       .subscribe((paragraph: string) => {
-        this.textSubject.next(paragraph);
+        this.textSubject.next(paragraph.toLowerCase());
       });
   }
 

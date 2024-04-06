@@ -1,5 +1,8 @@
-<p *ngIf="resource">
+<p *ngIf="resource" class="paragraph">
   <span class="correct">{{ resource.correct }}</span>
-  <span class="currentClass">{{ resource.currentChart }}</span
+  <span *ngIf="resource.invalid" class="invalid">{{ resource.invalid }}</span>
+  <span *ngIf="!resource.invalid" class="correct">{{
+    resource.currentChart
+  }}</span
   >{{ resource.pending }}
 </p>

@@ -13,6 +13,7 @@ export type ResourceType = {
   correct: string;
   currentChart: string;
   pending: string;
+  invalid: string;
 };
 @Component({
   selector: 'app-core',
@@ -22,8 +23,7 @@ export type ResourceType = {
 })
 export class CoreComponent implements OnInit, AfterViewInit, OnChanges {
   paragraph: string = '';
-  currentCharacter = 'a';
-  current: number = 5;
+  current: number = 0;
   resource!: ResourceType;
   constructor(private textService: TextService) {}
   ngOnChanges(changes: SimpleChanges): void {
@@ -47,14 +47,12 @@ export class CoreComponent implements OnInit, AfterViewInit, OnChanges {
     current: number = 0,
     key?: string
   ): ResourceType {
-    console.log(value, current, key);
-    current = current - 1;
     const words = value.split('');
-    console.log(words, current);
     const currentChart = words[current];
     const pending = words.splice(current + 1, words.length).join('');
     const correct = words.splice(0, current).join('');
-    return { correct, pending, currentChart };
+    const invalid = currentChart == key ? '' : currentChart;
+    return { correct, pending, currentChart, invalid };
   }
 
   ngAfterViewInit() {
@@ -68,15 +66,15 @@ export class CoreComponent implements OnInit, AfterViewInit, OnChanges {
 
   onChanges = (input: string) => {
     this.value = input;
-    console.log('Input changed', input);
   };
 
   onKeyPress = (button: string) => {
-    console.log('Button pressed', button);
-
-    /**
-     * If you want to handle the shift and caps lock buttons
-     */
+    const localResource = this.transform(this.paragraph, this.current, button);
+    button = button == '{space}' ? ' ' : button;
+    if (localResource.currentChart === button) {
+      this.current++;
+    }
+    this.resource = localResource;
     if (button === '{shift}' || button === '{lock}') this.handleShift();
   };
 

@@ -1,10 +1,17 @@
 .correct {
   color: rgb(56, 130, 105) !important;
 }
-.ivalid {
+.invalid {
   color: rgb(183, 67, 67) !important;
 }
 
 span {
   color: orangered;
+}
+
+.paragraph {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.8rem;
+  font-weight: bold;
 }
