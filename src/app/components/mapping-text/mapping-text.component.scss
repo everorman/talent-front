@@ -1,8 +1,10 @@
 .correct {
-  color: rgb(56, 130, 105) !important;
+  color: rgb(56, 130, 105);
 }
 .invalid {
-  color: rgb(183, 67, 67) !important;
+  color: rgb(183, 67, 67);
+  text-decoration: underline;
+  background-color: rgba(183, 67, 67, 0.3);
 }
 
 span {
