@@ -6,8 +6,10 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
-import { TextService } from '../../services/text-service/text.service';
 import Keyboard from 'simple-keyboard';
+import { LocalStorageService } from '../../services/local-storage/local-storage.service';
+import { TextService } from '../../services/text-service/text.service';
+import { FILE_PATH, WORDS_LENGTH } from '../../app.component';
 
 export type ResourceType = {
   correct: string;
@@ -25,19 +27,37 @@ export class CoreComponent implements OnInit, AfterViewInit, OnChanges {
   paragraph: string = '';
   current: number = 0;
   resource!: ResourceType;
-  constructor(private textService: TextService) {}
-  ngOnChanges(changes: SimpleChanges): void {
-    throw new Error('Method not implemented.');
-  }
   value = '';
   keyboard!: Keyboard;
 
+  constructor(
+    private textService: TextService,
+    private localStorage: LocalStorageService
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    throw new Error('Method not implemented.');
+  }
+
   ngOnInit(): void {
-    const path = '../../../assets/text.txt'; // Aquí debes proporcionar la ruta correcta al archivo de texto
-    const wordCount = 20; // Número de palabras que deseas en el párrafo
-    this.textService.getParagraph(path, wordCount);
+    const path = FILE_PATH;
+    const wordCount = WORDS_LENGTH;
+
+    const resourceSaved = this.localStorage.getItem('session');
+    const paragraphSaved = this.localStorage.getItem('paragraph');
+    const currentSaved = this.localStorage.getItem('current');
+    if (resourceSaved && paragraphSaved && currentSaved) {
+      this.resource = JSON.parse(resourceSaved);
+      this.paragraph = paragraphSaved;
+      this.current = parseInt(currentSaved);
+    } else {
+      this.textService.getParagraph(path, wordCount);
+    }
     this.textService.text$.subscribe((text: string) => {
+      if (!text) return;
       this.paragraph = text;
+      this.localStorage.setItem('paragraph', this.paragraph);
+      this.current = 0;
       this.resource = this.transform(text, this.current);
     });
   }
@@ -68,13 +88,16 @@ export class CoreComponent implements OnInit, AfterViewInit, OnChanges {
     this.value = input;
   };
 
-  onKeyPress = (button: string) => {
+  onKeyPress = (event: string) => {
+    console.log('onKeyPress', event);
+    const button = event == '{space}' ? ' ' : event;
     const localResource = this.transform(this.paragraph, this.current, button);
-    button = button == '{space}' ? ' ' : button;
     if (localResource.currentChart === button) {
       this.current++;
     }
     this.resource = localResource;
+    this.localStorage.setItem('session', JSON.stringify(this.resource));
+    this.localStorage.setItem('current', JSON.stringify(this.current));
     if (button === '{shift}' || button === '{lock}') this.handleShift();
   };
 
